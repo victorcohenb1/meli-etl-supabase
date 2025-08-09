@@ -1,0 +1,32 @@
+name: Run Meli ETL
+
+on:
+  workflow_dispatch: # Para ejecutarlo manualmente desde Actions
+  schedule:
+    - cron: "0 12 * * *" # Opcional: corre todos los días a las 12 UTC
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          MELI_CLIENT_ID: ${{ secrets.MELI_CLIENT_ID }}
+          MELI_CLIENT_SECRET: ${{ secrets.MELI_CLIENT_SECRET }}
+          MELI_REFRESH_TOKEN: ${{ secrets.MELI_REFRESH_TOKEN }}
+          SELLER_ID: ${{ secrets.SELLER_ID }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        run: python main.py
